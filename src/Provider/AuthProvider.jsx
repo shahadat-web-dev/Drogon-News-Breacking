@@ -1,52 +1,57 @@
 import React, { createContext, useEffect, useState } from 'react';
-import { createUserWithEmailAndPassword, getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut, updateProfile } from "firebase/auth";
+import { 
+  createUserWithEmailAndPassword, 
+  getAuth, 
+  onAuthStateChanged, 
+  signInWithEmailAndPassword, 
+  signOut, 
+  updateProfile 
+} from "firebase/auth";
 import app from '../Firebasa/Firebase.config';
 
-export const AuthContext = createContext();
+export const AuthContext = createContext(null);
 
 const auth = getAuth(app);
 
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  // console.log(loading, user);
-  
-  // createUser
+
+  // create user
   const createUser = (email, password) => {
     setLoading(true);
     return createUserWithEmailAndPassword(auth, email, password);
   };
 
+  // sign in
+  const signIn = (email, password) => {
+    setLoading(true);
+    return signInWithEmailAndPassword(auth, email, password);
+  };
 
-//  SignIn
-  const signIn = (email, password)=> {
-    setLoading(true)
-    return signInWithEmailAndPassword(auth, email, password)
-  }
+  // update user
+  const updateUser = (updatedData) => {
+    return updateProfile(auth.currentUser, updatedData);
+  };
 
-  // Update User
-  const updateUser = (updatedDate) => {
-    return updateProfile(auth.currentUser, updatedDate)
-    
-  }
-
-  // Logout
+  // log out
   const logOut = () => {
     return signOut(auth);
-  }
+  };
 
-
+  // observe auth state
   useEffect(() => {
-  const unsubscribe = onAuthStateChanged(auth,(currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
-      setLoading(false)
-  return () => {
-   unsubscribe()
-  }
-    },[])
-  })
+      setLoading(false);
+    });
 
+    return () => unsubscribe(); // ✅ Cleanup
+  }, []);
+
+  // Provide data to context
   const authData = {
+    auth, 
     user,
     setUser,
     createUser,
@@ -54,8 +59,7 @@ const AuthProvider = ({ children }) => {
     signIn,
     loading,
     setLoading,
-    
-    
+    updateUser,
   };
 
   return (
@@ -63,6 +67,6 @@ const AuthProvider = ({ children }) => {
       {children}
     </AuthContext.Provider>
   );
-}
+};
 
 export default AuthProvider;
