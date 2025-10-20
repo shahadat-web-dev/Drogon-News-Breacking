@@ -16,14 +16,14 @@ const Navbar = () => {
     })
   }
   return (
-    <div className='md:flex items-center md:justify-between justify-center'>
+    <div className='md:flex items-center md:justify-between justify-center py-4'>
       <div className=''>{user && user.email}</div>
       <div className='nav  flex gap-5 justify-center  text-[#706F6F] text-lg'>
         <NavLink to='/'>Home</NavLink>
         <NavLink to='/about'>About</NavLink>
         <NavLink to='/career'>Career</NavLink>
       </div>
-      <div className='login-btn flex gap-5'>
+      <div className='login-btn flex gap-5 justify-between px-4 py-4'>
         <img className='w-12 rounded-full' src={`${user ? user.photoURL : userIcon}`} alt="" />
         {
           user ? <button onClick={handleLogOut} className='btn px-10 text-white bg-[#403F3F]'>Logout</button> : <Link to='/auth/login' className='btn px-10 text-white bg-[#403F3F]'>Login</Link>
